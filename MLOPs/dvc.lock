@@ -1,0 +1,88 @@
+schema: '2.0'
+stages:
+  load_data:
+    cmd: python parkinson/load_data.py ./data/raw/parkinsons_updrs.data ./data/processed/train_test_data.csv
+    deps:
+    - path: ./data/raw/parkinsons_updrs.data
+      hash: md5
+      md5: 4f97310e2c9fbeedb72e8a37822fee45
+      size: 911261
+    - path: parkinson/load_data.py
+      hash: md5
+      md5: 577cd17e309aeee3d5bc30e6145dc2d7
+      size: 242
+    outs:
+    - path: ./data/processed/train_test_data.csv
+      hash: md5
+      md5: ad8a7fe3514c6b20e3f3abb5d43294fb
+      size: 907418
+  preprocess:
+    cmd: python parkinson/preprocess.py ./data/processed/train_test_data.csv ./data/processed/X_train.csv
+      ./data/processed/X_test.csv ./data/processed/y_train.csv ./data/processed/y_test.csv
+    deps:
+    - path: ./data/processed/train_test_data.csv
+      hash: md5
+      md5: ad8a7fe3514c6b20e3f3abb5d43294fb
+      size: 907418
+    - path: parkinson/preprocess.py
+      hash: md5
+      md5: 1a8d32c75dbef8c53fd283e42d5b5de9
+      size: 1472
+    outs:
+    - path: ./data/processed/X_test.csv
+      hash: md5
+      md5: ae0cb91c92b0828b19c2708b75436617
+      size: 278492
+    - path: ./data/processed/X_train.csv
+      hash: md5
+      md5: 8ef58e537b511d5361439d6b56b2076c
+      size: 1113985
+    - path: ./data/processed/y_test.csv
+      hash: md5
+      md5: 6e1900b99b48de37a810dc134c056d77
+      size: 8003
+    - path: ./data/processed/y_train.csv
+      hash: md5
+      md5: f589f95e85fe81c3395f052c28da9e8a
+      size: 31942
+  train:
+    cmd: python parkinson/train.py ./data/processed/X_train.csv ./data/processed/y_train.csv
+      ./models/model.pkl
+    deps:
+    - path: ./data/processed/X_train.csv
+      hash: md5
+      md5: 8ef58e537b511d5361439d6b56b2076c
+      size: 1113985
+    - path: ./data/processed/y_train.csv
+      hash: md5
+      md5: f589f95e85fe81c3395f052c28da9e8a
+      size: 31942
+    - path: parkinson/train.py
+      hash: md5
+      md5: e016db20acc60a5c2cef5f3f9c8f820e
+      size: 591
+    outs:
+    - path: ./models/model.pkl
+      hash: md5
+      md5: 73462a74c850151ebe37d7f88513aabc
+      size: 197064
+  evaluate:
+    cmd: python parkinson/evaluate.py ./models/model.pkl ./data/processed/X_test.csv
+      ./data/processed/y_test.csv
+    deps:
+    - path: ./data/processed/X_test.csv
+      hash: md5
+      md5: ae0cb91c92b0828b19c2708b75436617
+      size: 278492
+    - path: ./data/processed/y_test.csv
+      hash: md5
+      md5: 6e1900b99b48de37a810dc134c056d77
+      size: 8003
+    - path: ./models/model.pkl
+      hash: md5
+      md5: 73462a74c850151ebe37d7f88513aabc
+      size: 197064
+    - path: parkinson/evaluate.py
+      hash: md5
+      md5: cc0904ad5650eb52857a6f8d2ec4b89b
+      size: 651
