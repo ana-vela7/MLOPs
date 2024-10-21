@@ -5,46 +5,46 @@ stages:
     deps:
     - path: ./data/raw/parkinsons_updrs.data
       hash: md5
-      md5: 4f97310e2c9fbeedb72e8a37822fee45
-      size: 911261
+      md5: b80c89b9071dd9aa28a240b9782acd44
+      size: 917136
     - path: parkinson/load_data.py
       hash: md5
-      md5: 577cd17e309aeee3d5bc30e6145dc2d7
-      size: 242
+      md5: 82672f1ec3c57e7c200b010f3751fa33
+      size: 255
     outs:
     - path: ./data/processed/train_test_data.csv
       hash: md5
-      md5: ad8a7fe3514c6b20e3f3abb5d43294fb
-      size: 907418
+      md5: bf5a01c3eaf3a0d913bdb7d3bf9331de
+      size: 913294
   preprocess:
     cmd: python parkinson/preprocess.py ./data/processed/train_test_data.csv ./data/processed/X_train.csv
       ./data/processed/X_test.csv ./data/processed/y_train.csv ./data/processed/y_test.csv
     deps:
     - path: ./data/processed/train_test_data.csv
       hash: md5
-      md5: ad8a7fe3514c6b20e3f3abb5d43294fb
-      size: 907418
+      md5: bf5a01c3eaf3a0d913bdb7d3bf9331de
+      size: 913294
     - path: parkinson/preprocess.py
       hash: md5
-      md5: 1a8d32c75dbef8c53fd283e42d5b5de9
-      size: 1472
+      md5: d29ec74e0e33e1f31a36b8132724a708
+      size: 1514
     outs:
     - path: ./data/processed/X_test.csv
       hash: md5
-      md5: ae0cb91c92b0828b19c2708b75436617
-      size: 278492
+      md5: 939317a3e4a32b554b9a095a8b28add4
+      size: 279668
     - path: ./data/processed/X_train.csv
       hash: md5
-      md5: 8ef58e537b511d5361439d6b56b2076c
-      size: 1113985
+      md5: f6fc72514cad21059bb9c9c7859723fe
+      size: 1118686
     - path: ./data/processed/y_test.csv
       hash: md5
-      md5: 6e1900b99b48de37a810dc134c056d77
-      size: 8003
+      md5: 043a4c8668717724eb6fbd416d38e455
+      size: 9179
     - path: ./data/processed/y_train.csv
       hash: md5
-      md5: f589f95e85fe81c3395f052c28da9e8a
-      size: 31942
+      md5: a842bc416589832af884e1d6833f72ef
+      size: 36643
   train:
     cmd: python parkinson/train.py ./data/processed/X_train.csv ./data/processed/y_train.csv
       ./models/model.pkl
