@@ -1,6 +1,7 @@
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
+from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, r2_score
 from sklearn.compose import ColumnTransformer
 import mlflow
@@ -55,43 +56,70 @@ preprocessing = ColumnTransformer(
 # Eliminar las columnas con alta correlación
 df = df.drop(columns=correlated_cols)
 
-# Separar las características (X) y la variable objetivo (y)
-X = df.drop(['motor_UPDRS'], axis=1)
-y = df['total_UPDRS']
-
 mlflow.set_tracking_uri("http://localhost:5000")
 mlflow.set_experiment(f"/user/Parkinson")
 
+# Dividir el conjunto de datos en entrenamiento y prueba
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Estandarización de los datos
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
 with mlflow.start_run() as run:
-    # Dividir el conjunto de datos en entrenamiento y prueba
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-    # Estandarización de los datos
-    scaler = StandardScaler()
-    X_train = scaler.fit_transform(X_train)
-    X_test = scaler.transform(X_test)
-
     # Entrenar un modelo de Gradient Boosting Regressor
     gbr_model = GradientBoostingRegressor(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)
     gbr_model.fit(X_train, y_train)
+    y_pred_gbr = gbr_model.predict(X_test)      
+    mae_gbr, r2_gbr = eval_metrics(y_test, y_pred_gbr)
+    print("Gradient Boosting Regressor MAE: %s" % mae_gbr)
+    print("Gradient Boosting Regressor R2: %s" % r2_gbr)
 
-    # Realizar predicciones en el conjunto de prueba
-    y_pred = gbr_model.predict(X_test)
-
-    # Evaluar el rendimiento del modelo
-    r2 = r2_score(y_test, y_pred)
-    (mae, r2) = eval_metrics(y_test, y_pred)
-
+    # Registrando el modelo en MLFLOW
+    mlflow.sklearn.log_model(gbr_model, "gbr_model")
+    print(f"Model saved to: runs:/{run.info.run_id}/model")        
     mlflow.log_param("n_estimators", 100)
     mlflow.log_param("learning_rate", 0.1)
     mlflow.log_param("max_depth", 3)
     mlflow.log_param("random_state", 42)
+    mlflow.log_metric("r2", r2_gbr)
+    mlflow.log_metric("mae", mae_gbr)    
 
-    # Log the model
-    mlflow.sklearn.log_model(gbr_model, "model")    
+with mlflow.start_run() as run:
 
-    mlflow.log_metric("r2", r2)
-    mlflow.log_metric("mae", mae)
-    print("  MAE: %s" % mae)
-    print("  R2: %s" % r2)
-    
+    # Entrenar un modelo de Random Forest Regressor
+    rf_model = RandomForestRegressor(n_estimators=100, max_depth=5, random_state=42)
+    rf_model.fit(X_train, y_train)
+    y_pred_rf = rf_model.predict(X_test)
+    mae_rf, r2_rf = eval_metrics(y_test, y_pred_rf)
+    print("Random Forest Regressor MAE: %s" % mae_rf)
+    print("Random Forest Regressor R2: %s" % r2_rf)    
+
+    # Registrando el modelo en MLFLOW
+    mlflow.sklearn.log_model(rf_model, "rf_model")
+    print(f"Model saved to: runs:/{run.info.run_id}/model")       
+    mlflow.log_param("n_estimators", 100)
+    mlflow.log_param("max_depth", 5)
+    mlflow.log_param("random_state", 42)  
+    mlflow.log_metric("r2", r2_rf)
+    mlflow.log_metric("mae", mae_rf)
+
+with mlflow.start_run() as run:
+
+    # Entrenar un modelo de Linear Regression
+    lr_model = LinearRegression()
+    lr_model.fit(X_train, y_train)
+    y_pred_lr = lr_model.predict(X_test)
+    mae_lr, r2_lr = eval_metrics(y_test, y_pred_lr)
+    print("Linear Regression MAE: %s" % mae_lr)
+    print("Linear Regression R2: %s" % r2_lr)
+
+    # Registrando el modelo en MLFLOW
+    mlflow.sklearn.log_model(lr_model, "lr_model")
+    print(f"Model saved to: runs:/{run.info.run_id}/model")       
+    # mlflow.log_param("n_estimators", 100)
+    # mlflow.log_param("max_depth", 5)
+    # mlflow.log_param("random_state", 42)  
+    mlflow.log_metric("r2", r2_rf)
+    mlflow.log_metric("mae", mae_rf)
