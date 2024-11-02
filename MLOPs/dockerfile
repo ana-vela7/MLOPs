@@ -1,0 +1,46 @@
+# Step 1:Descargar imagen de python
+FROM python:3.8-slim
+
+# Step 2: Instalar dependencias
+RUN apt-get update && apt-get upgrade -y
+
+# Step 3: Instalar  Python pip, git, build-essential y curl
+RUN apt-get install -y python3 python3-pip git build-essential curl
+
+# Step 4: Instalar Rust
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+# Step 4: Upgrade pip ultima version
+RUN pip install --upgrade pip
+
+# Step 5: Instalar dependencias de python
+RUN pip install numpy pandas ipykernel matplotlib seaborn scikit-learn notebook dvc mlflow ucimlrepo
+
+# Step 7: Instalar cookiecutter
+RUN pip install cookiecutter
+
+# Step 8: Crear template de proyecto
+RUN cookiecutter https://github.com/khuyentran1401/data-science-template -f --no-input
+
+# Step 9: crea un python virtual environment
+RUN python3 -m venv /app/venv
+
+# Step 10: Configurar DVC local storage
+RUN mkdir -p /app/local_storage
+
+# Step 10: Copiar el proyecto a la carpeta de trabajo
+COPY . /app/data-science-template/
+
+# Step 12: Inicializar git y DVC
+WORKDIR /app/data-science-template
+RUN git init && \
+    git config user.email "equipo12@tec.mx" && \
+    git config user.name "Equipo 12" && \
+    git add . && \
+    git commit -m "Initial commit"
+RUN dvc init
+RUN dvc remote add -d local_remote /app/local_storage/
+
+# Punto de entrada
+CMD ["bash"]

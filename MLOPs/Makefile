@@ -2,8 +2,8 @@
 # GLOBALS                                                                       #
 #################################################################################
 
-PROJECT_NAME = MLOPs
-PYTHON_VERSION = 3.10
+PROJECT_NAME = Parkinson
+PYTHON_VERSION = 3.11.4
 PYTHON_INTERPRETER = python
 
 #################################################################################
@@ -29,14 +29,14 @@ clean:
 ## Lint using flake8 and black (use `make format` to do formatting)
 .PHONY: lint
 lint:
-	flake8 parkinson
-	isort --check --diff --profile black parkinson
-	black --check --config pyproject.toml parkinson
+	flake8 Parkinson
+	isort --check --diff --profile black Parkinson
+	black --check --config pyproject.toml Parkinson
 
 ## Format source code with black
 .PHONY: format
 format:
-	black --config pyproject.toml parkinson
+	black --config pyproject.toml Parkinson
 
 
 
@@ -54,11 +54,6 @@ create_environment:
 # PROJECT RULES                                                                 #
 #################################################################################
 
-
-## Make Dataset
-.PHONY: data
-data: requirements
-	$(PYTHON_INTERPRETER) parkinson/dataset.py
 
 
 #################################################################################

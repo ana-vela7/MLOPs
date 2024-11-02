@@ -1,0 +1,4 @@
+data:
+  filepath: "/DevOps/MLOpsPactices/parkinson/parkinsons_updrs.data"
+  processed: data/processed/
+  models: models/
