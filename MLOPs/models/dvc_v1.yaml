@@ -1,0 +1,36 @@
+stages:
+  load_data:
+    cmd: python Parkinson/load_data.py ${data.filepath} ${data.processed}train_test_data.csv
+    deps:
+      - Parkinson/load_data.py
+      - ${data.filepath}
+    outs:
+      - ${data.processed}train_test_data.csv
+
+  preprocess:
+    cmd: python Parkinson/preprocess_data.py ${data.processed}train_test_data.csv ${data.processed}X_train.csv ${data.processed}X_test.csv ${data.processed}y_train.csv ${data.processed}y_test.csv
+    deps:
+      - Parkinson/preprocess_data.py
+      - ${data.processed}train_test_data.csv
+    outs:
+      - ${data.processed}X_train.csv
+      - ${data.processed}X_test.csv
+      - ${data.processed}y_train.csv
+      - ${data.processed}y_test.csv
+
+  train:
+    cmd: python Parkinson/train.py ${data.processed}X_train.csv ${data.processed}y_train.csv ${data.models}model.pkl
+    deps:
+      - Parkinson/train.py
+      - ${data.processed}X_train.csv
+      - ${data.processed}y_train.csv
+    outs:
+      - ${data.models}model.pkl
+
+  evaluate:
+    cmd: python Parkinson/evaluate.py ${data.models}model.pkl ${data.processed}X_test.csv ${data.processed}y_test.csv
+    deps:
+      - Parkinson/evaluate.py
+      - ${data.models}model.pkl
+      - ${data.processed}X_test.csv
+      - ${data.processed}y_test.csv

@@ -1,16 +1,16 @@
 stages:
   load_data:
-    cmd: python parkinson/load_data.py ${data.filepath} ${data.processed}train_test_data.csv
+    cmd: python parkinson/load_data_v2.py ${data.filepath} ${data.processed}train_test_data.csv
     deps:
-      - parkinson/load_data.py
+      - parkinson/load_data_v2.py
       - ${data.filepath}
     outs:
       - ${data.processed}train_test_data.csv
 
   preprocess:
-    cmd: python parkinson/preprocess.py ${data.processed}train_test_data.csv ${data.processed}X_train.csv ${data.processed}X_test.csv ${data.processed}y_train.csv ${data.processed}y_test.csv
+    cmd: python parkinson/preprocess_data_v2.py ${data.processed}train_test_data.csv ${data.processed}X_train.csv ${data.processed}X_test.csv ${data.processed}y_train.csv ${data.processed}y_test.csv
     deps:
-      - parkinson/preprocess.py
+      - parkinson/preprocess_data_v2.py
       - ${data.processed}train_test_data.csv
     outs:
       - ${data.processed}X_train.csv
@@ -18,19 +18,45 @@ stages:
       - ${data.processed}y_train.csv
       - ${data.processed}y_test.csv
 
-  train:
-    cmd: python parkinson/train.py ${data.processed}X_train.csv ${data.processed}y_train.csv ${data.models}model.pkl
+  train_GradientBoostingRegressor:
+    cmd: python parkinson/train_v2.py data/processed/X_train.csv data/processed/X_test.csv data/processed/y_train.csv data/processed/y_test.csv GradientBoostingRegressor
     deps:
-      - parkinson/train.py
-      - ${data.processed}X_train.csv
-      - ${data.processed}y_train.csv
+      - parkinson/train_v2.py
+      - data/processed/X_train.csv
+      - data/processed/X_test.csv
+      - data/processed/y_train.csv
+      - data/processed/y_test.csv
     outs:
-      - ${data.models}model.pkl
+      - models/GradientBoostingRegressor_model.pkl
 
-  evaluate:
-    cmd: python parkinson/evaluate.py ${data.models}model.pkl ${data.processed}X_test.csv ${data.processed}y_test.csv
+  train_RandomForestRegressor:
+    cmd: python parkinson/train_v2.py data/processed/X_train.csv data/processed/X_test.csv data/processed/y_train.csv data/processed/y_test.csv RandomForestRegressor
     deps:
-      - parkinson/evaluate.py
-      - ${data.models}model.pkl
-      - ${data.processed}X_test.csv
-      - ${data.processed}y_test.csv
+      - parkinson/train_v2.py
+      - data/processed/X_train.csv
+      - data/processed/X_test.csv
+      - data/processed/y_train.csv
+      - data/processed/y_test.csv
+    outs:
+      - models/RandomForestRegressor_model.pkl
+
+  evaluate_GradientBoostingRegressor:
+    cmd: python parkinson/evaluate_v2.py models/GradientBoostingRegressor_model.pkl data/processed/X_test.csv data/processed/y_test.csv reports/GradientBoostingRegressor.txt
+    deps:
+      - parkinson/evaluate_v2.py
+      - models/GradientBoostingRegressor_model.pkl
+      - data/processed/X_test.csv
+      - data/processed/y_test.csv
+    outs:
+      - reports/GradientBoostingRegressor.txt
+
+
+  evaluate_RandomForestRegressor:
+    cmd: python parkinson/evaluate_v2.py models/RandomForestRegressor_model.pkl data/processed/X_test.csv data/processed/y_test.csv reports/RandomForestRegressor.txt
+    deps:
+      - parkinson/evaluate_v2.py
+      - models/RandomForestRegressor_model.pkl
+      - data/processed/X_test.csv
+      - data/processed/y_test.csv
+    outs:
+      - reports/RandomForestRegressor.txt

@@ -1,88 +1,197 @@
 schema: '2.0'
 stages:
   load_data:
-    cmd: python parkinson/load_data.py ./data/raw/parkinsons_updrs.data ./data/processed/train_test_data.csv
+    cmd: python Parkinson/load_data_v2.py /DevOps/MLOpsPactices/Parkinson/parkinsons_updrs.data
+      data/processed/train_test_data.csv
     deps:
-    - path: ./data/raw/parkinsons_updrs.data
+    - path: /DevOps/MLOpsPactices/Parkinson/parkinsons_updrs.data
       hash: md5
-      md5: b80c89b9071dd9aa28a240b9782acd44
-      size: 917136
-    - path: parkinson/load_data.py
+      md5: 4f97310e2c9fbeedb72e8a37822fee45
+      size: 911261
+    - path: Parkinson/load_data_v2.py
       hash: md5
-      md5: 82672f1ec3c57e7c200b010f3751fa33
-      size: 255
+      md5: 711f74229544a6af06a9fbf86af24951
+      size: 265
     outs:
-    - path: ./data/processed/train_test_data.csv
+    - path: data/processed/train_test_data.csv
       hash: md5
       md5: bf5a01c3eaf3a0d913bdb7d3bf9331de
       size: 913294
   preprocess:
-    cmd: python parkinson/preprocess.py ./data/processed/train_test_data.csv ./data/processed/X_train.csv
-      ./data/processed/X_test.csv ./data/processed/y_train.csv ./data/processed/y_test.csv
+    cmd: python Parkinson/preprocess_data_v2.py data/processed/train_test_data.csv
+      data/processed/X_train.csv data/processed/X_test.csv data/processed/y_train.csv
+      data/processed/y_test.csv
     deps:
-    - path: ./data/processed/train_test_data.csv
+    - path: Parkinson/preprocess_data_v2.py
+      hash: md5
+      md5: 0405510dd8f1a94fe55f276ce7555df0
+      size: 2075
+    - path: data/processed/train_test_data.csv
       hash: md5
       md5: bf5a01c3eaf3a0d913bdb7d3bf9331de
       size: 913294
-    - path: parkinson/preprocess.py
-      hash: md5
-      md5: d29ec74e0e33e1f31a36b8132724a708
-      size: 1514
     outs:
-    - path: ./data/processed/X_test.csv
+    - path: data/processed/X_test.csv
       hash: md5
-      md5: 939317a3e4a32b554b9a095a8b28add4
-      size: 279668
-    - path: ./data/processed/X_train.csv
+      md5: f0c2d78d17b8ced01a8bcbe6f400b6ea
+      size: 97248
+    - path: data/processed/X_train.csv
       hash: md5
-      md5: f6fc72514cad21059bb9c9c7859723fe
-      size: 1118686
-    - path: ./data/processed/y_test.csv
+      md5: 2108fb6a0784feff92d7349775d18197
+      size: 389288
+    - path: data/processed/y_test.csv
       hash: md5
       md5: 043a4c8668717724eb6fbd416d38e455
       size: 9179
-    - path: ./data/processed/y_train.csv
+    - path: data/processed/y_train.csv
       hash: md5
       md5: a842bc416589832af884e1d6833f72ef
       size: 36643
   train:
-    cmd: python parkinson/train.py ./data/processed/X_train.csv ./data/processed/y_train.csv
-      ./models/model.pkl
+    cmd: python Parkinson/train.py data/processed/X_train.csv data/processed/y_train.csv
+      models/model.pkl
     deps:
-    - path: ./data/processed/X_train.csv
+    - path: Parkinson/train.py
       hash: md5
-      md5: 8ef58e537b511d5361439d6b56b2076c
-      size: 1113985
-    - path: ./data/processed/y_train.csv
+      md5: a88eea4e243b168ba71e1a5b422f3ed9
+      size: 757
+    - path: data/processed/X_train.csv
       hash: md5
-      md5: f589f95e85fe81c3395f052c28da9e8a
-      size: 31942
-    - path: parkinson/train.py
+      md5: 2108fb6a0784feff92d7349775d18197
+      size: 389288
+    - path: data/processed/y_train.csv
       hash: md5
-      md5: e016db20acc60a5c2cef5f3f9c8f820e
-      size: 591
+      md5: a842bc416589832af884e1d6833f72ef
+      size: 36643
     outs:
-    - path: ./models/model.pkl
+    - path: models/model.pkl
       hash: md5
-      md5: 73462a74c850151ebe37d7f88513aabc
-      size: 197064
+      md5: 408d2cfc5ea3dbb67d9faefd67e113db
+      size: 195704
   evaluate:
-    cmd: python parkinson/evaluate.py ./models/model.pkl ./data/processed/X_test.csv
-      ./data/processed/y_test.csv
+    cmd: python Parkinson/evaluate.py models/model.pkl data/processed/X_test.csv data/processed/y_test.csv
     deps:
-    - path: ./data/processed/X_test.csv
+    - path: Parkinson/evaluate.py
       hash: md5
-      md5: ae0cb91c92b0828b19c2708b75436617
-      size: 278492
-    - path: ./data/processed/y_test.csv
+      md5: c1bce92169b8804c93a64f889559d9f3
+      size: 1108
+    - path: data/processed/X_test.csv
       hash: md5
-      md5: 6e1900b99b48de37a810dc134c056d77
-      size: 8003
-    - path: ./models/model.pkl
+      md5: f0c2d78d17b8ced01a8bcbe6f400b6ea
+      size: 97248
+    - path: data/processed/y_test.csv
       hash: md5
-      md5: 73462a74c850151ebe37d7f88513aabc
-      size: 197064
-    - path: parkinson/evaluate.py
+      md5: 043a4c8668717724eb6fbd416d38e455
+      size: 9179
+    - path: models/model.pkl
       hash: md5
-      md5: cc0904ad5650eb52857a6f8d2ec4b89b
-      size: 651
+      md5: 408d2cfc5ea3dbb67d9faefd67e113db
+      size: 195704
+  train_GradientBoostingRegressor:
+    cmd: python Parkinson/train_v2.py data/processed/X_train.csv data/processed/X_test.csv
+      data/processed/y_train.csv data/processed/y_test.csv GradientBoostingRegressor
+    deps:
+    - path: Parkinson/train_v2.py
+      hash: md5
+      md5: bfa38a7f8dcb5d3b6400af18a4663215
+      size: 3033
+    - path: data/processed/X_test.csv
+      hash: md5
+      md5: f0c2d78d17b8ced01a8bcbe6f400b6ea
+      size: 97248
+    - path: data/processed/X_train.csv
+      hash: md5
+      md5: 2108fb6a0784feff92d7349775d18197
+      size: 389288
+    - path: data/processed/y_test.csv
+      hash: md5
+      md5: 043a4c8668717724eb6fbd416d38e455
+      size: 9179
+    - path: data/processed/y_train.csv
+      hash: md5
+      md5: a842bc416589832af884e1d6833f72ef
+      size: 36643
+    outs:
+    - path: models/GradientBoostingRegressor_model.pkl
+      hash: md5
+      md5: 153dad8731c633708a0c0de8898a053d
+      size: 195702
+  train_RandomForestRegressor:
+    cmd: python Parkinson/train_v2.py data/processed/X_train.csv data/processed/X_test.csv
+      data/processed/y_train.csv data/processed/y_test.csv RandomForestRegressor
+    deps:
+    - path: Parkinson/train_v2.py
+      hash: md5
+      md5: bfa38a7f8dcb5d3b6400af18a4663215
+      size: 3033
+    - path: data/processed/X_test.csv
+      hash: md5
+      md5: f0c2d78d17b8ced01a8bcbe6f400b6ea
+      size: 97248
+    - path: data/processed/X_train.csv
+      hash: md5
+      md5: 2108fb6a0784feff92d7349775d18197
+      size: 389288
+    - path: data/processed/y_test.csv
+      hash: md5
+      md5: 043a4c8668717724eb6fbd416d38e455
+      size: 9179
+    - path: data/processed/y_train.csv
+      hash: md5
+      md5: a842bc416589832af884e1d6833f72ef
+      size: 36643
+    outs:
+    - path: models/RandomForestRegressor_model.pkl
+      hash: md5
+      md5: 7c5ac98c3a4fc37f27794b08cc82d225
+      size: 485473
+  evaluate_GradientBoostingRegressor:
+    cmd: python Parkinson/evaluate_v2.py models/GradientBoostingRegressor_model.pkl
+      data/processed/X_test.csv data/processed/y_test.csv reports/GradientBoostingRegressor.txt
+    deps:
+    - path: Parkinson/evaluate_v2.py
+      hash: md5
+      md5: 270a05d36b424e16a3cd01a7ded75791
+      size: 1064
+    - path: data/processed/X_test.csv
+      hash: md5
+      md5: f0c2d78d17b8ced01a8bcbe6f400b6ea
+      size: 97248
+    - path: data/processed/y_test.csv
+      hash: md5
+      md5: 043a4c8668717724eb6fbd416d38e455
+      size: 9179
+    - path: models/GradientBoostingRegressor_model.pkl
+      hash: md5
+      md5: 153dad8731c633708a0c0de8898a053d
+      size: 195702
+    outs:
+    - path: reports/GradientBoostingRegressor.txt
+      hash: md5
+      md5: 2f88d89bce4665231213fdb33361518c
+      size: 49
+  evaluate_RandomForestRegressor:
+    cmd: python Parkinson/evaluate_v2.py models/RandomForestRegressor_model.pkl data/processed/X_test.csv
+      data/processed/y_test.csv reports/RandomForestRegressor.txt
+    deps:
+    - path: Parkinson/evaluate_v2.py
+      hash: md5
+      md5: 270a05d36b424e16a3cd01a7ded75791
+      size: 1064
+    - path: data/processed/X_test.csv
+      hash: md5
+      md5: f0c2d78d17b8ced01a8bcbe6f400b6ea
+      size: 97248
+    - path: data/processed/y_test.csv
+      hash: md5
+      md5: 043a4c8668717724eb6fbd416d38e455
+      size: 9179
+    - path: models/RandomForestRegressor_model.pkl
+      hash: md5
+      md5: 7c5ac98c3a4fc37f27794b08cc82d225
+      size: 485473
+    outs:
+    - path: reports/RandomForestRegressor.txt
+      hash: md5
+      md5: 2cd3bb8a5c339fefd0fd362afad0f834
+      size: 49

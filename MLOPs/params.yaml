@@ -1,20 +1,19 @@
-base:
-  seed: 42
-
-data_load:
-  dataset_csv: 'data/raw/parkinsons_updrs.data'
-
-data_split:
-  test_size: 0.2
-  trainset_path: 'data/processed/train_parkinson.csv'
-  testset_path: 'data/processed/train_parkinson.csv'
-
-train:
-  n_estimators: 100 
-  learning_rate: 0.1
-  max_depth: 3
-
 data:
-  filepath: './data/raw/parkinsons_updrs.data'
-  processed: './data/processed/'
-  models: './models/'
+  filepath: "/DevOps/MLOpsPactices/parkinson/parkinsons_updrs.data"
+  processed: data/processed/
+  models: models/
+
+models:
+  GradientBoostingRegressor:
+    n_estimators: 100
+    learning_rate: 0.1
+    max_depth: 3
+    random_state: 42
+  RandomForestRegressor:
+    n_estimators: 100
+    max_depth: 5
+    random_state: 42
+
+mlflow:
+  experiment_name: "Parkinson Analysis v1"
+  tracking_uri: "http://127.0.0.1:5000"
