@@ -5,6 +5,12 @@ import mlflow
 import yaml
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, r2_score
+import os 
+
+# Set MinIO credentials and endpoint
+os.environ["AWS_ACCESS_KEY_ID"] = "F8MWOz0f0SEIyvKa66aY"
+os.environ["AWS_SECRET_ACCESS_KEY"] = "BSPKB9TZ0vlI6dn8l5LPOa2hfWQRKttQg9YMXsL6"
+
 
 def eval_metrics(actual, pred):
     mae = mean_absolute_error(actual, pred)
