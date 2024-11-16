@@ -1,5 +1,5 @@
 data:
-  filepath: "/DevOps/MLOpsPactices/parkinson/parkinsons_updrs.data"
+  filepath: "parkinsons_updrs.data"
   processed: data/processed/
   models: models/
 
@@ -16,4 +16,4 @@ models:
 
 mlflow:
   experiment_name: "Parkinson Analysis v2"
-  tracking_uri: "http://164.92.66.114:5000"
+  tracking_uri: "http://164.92.66.114:5000/"
