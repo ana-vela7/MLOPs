@@ -1,0 +1,49 @@
+name: MLFlow_CICD_Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  MLFlow_CICD_Workflow:
+    runs-on: ubuntu-latest
+
+    env:
+      MLFLOW_TRACKING_URI: "http://164.92.66.114:5000"
+      MLFLOW_EXPERIMENT_NAME: "Parkinson Analysis v2"
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      MLFLOW_S3_ENDPOINT_URL: "http://164.92.66.114:9000"
+      PARAMS_FILEPATH : ${{ github.workspace }}/MLOPs/
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9' # Specify the Python version you need
+
+      # Step 3: Install dependencies from MLOps/requirements.txt
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install numpy pandas ipykernel matplotlib seaborn scikit-learn notebook dvc mlflow ucimlrepo requests boto3 
+          pip install -r MLOPs/requirements.txt
+      
+      - name: Run Refavtored_v2
+        run: |
+          cd MLOPs/
+          python parkinson/parkinson_refactored_v2.py
+
+      - name: Run DVC repo
+        run: |
+          cd MLOPs/
+          dvc repro

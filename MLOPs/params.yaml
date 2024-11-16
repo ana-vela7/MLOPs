@@ -1,5 +1,5 @@
 data:
-  filepath: "/DevOps/MLOpsPactices/parkinson/parkinsons_updrs.data"
+  filepath: "parkinsons_updrs.data"
   processed: data/processed/
   models: models/
 
@@ -7,7 +7,7 @@ models:
   GradientBoostingRegressor:
     n_estimators: 100
     learning_rate: 0.1
-    max_depth: 3
+    max_depth: 5
     random_state: 42
   RandomForestRegressor:
     n_estimators: 100
@@ -15,5 +15,5 @@ models:
     random_state: 42
 
 mlflow:
-  experiment_name: "Parkinson Analysis v1"
-  tracking_uri: "http://127.0.0.1:5000"
+  experiment_name: "Parkinson Analysis v2"
+  tracking_uri: "http://164.92.66.114:5000/"
